@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "TeslaPassiveEntry",
+    "slug": "tesla-passive-entry",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["ios"],
+    "ios": {
+      "bundleIdentifier": "com.yourname.teslabte",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to communicate with your Tesla vehicle for passive entry.",
+        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to communicate with your Tesla vehicle.",
+        "UIBackgroundModes": [
+          "bluetooth-central",
+          "bluetooth-peripheral"
+        ]
+      },
+      "entitlements": {
+        "com.apple.developer.bluetooth-le-background-capabilities": [
+          "bluetooth-central"
+        ]
+      }
+    },
+    "plugins": [
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": true,
+          "modes": ["peripheral", "central"],
+          "bluetoothAlwaysPermission": "Allow $(DISPLAY_NAME) to connect to Tesla over Bluetooth"
+        }
+      ]
+    ],
+    "assets": [
+      "./assets/private_key.pem",
+      "./assets/public_key.pem"
+    ],
+    "extra": {}
+  }
+}
