@@ -29,7 +29,8 @@
           "modes": ["peripheral", "central"],
           "bluetoothAlwaysPermission": "Allow $(DISPLAY_NAME) to connect to Tesla over Bluetooth"
         }
-      ]
+      ],
+      "./plugins/withSwift6Fix"
     ],
     "assets": [
       "./assets/private_key.pem",
