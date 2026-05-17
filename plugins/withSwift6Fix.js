@@ -13,23 +13,25 @@ module.exports = function withSwift6Fix(config) {
 
       let contents = fs.readFileSync(podfilePath, 'utf-8');
 
+      // Guard: do not inject twice
       if (contents.includes('SWIFT_STRICT_CONCURRENCY')) {
         return mod;
       }
 
-      const block = `
-# ── Swift 6 / Xcode 16.4 workaround ─────────────────────────────────────────
-post_install do |installer|
+      // Find Expo's native post_install block and inject our code directly inside it
+      const injection = `post_install do |installer|
+  # ── Swift 6 / Xcode 16.4 workaround ─────────────────────────────────────────
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['SWIFT_STRICT_CONCURRENCY'] = 'minimal'
     end
   end
-end
-# ─────────────────────────────────────────────────────────────────────────────
+  # ─────────────────────────────────────────────────────────────────────────────
 `;
+      
+      // Replace the declaration line with our injected version
+      contents = contents.replace('post_install do |installer|', injection);
 
-      contents += block;
       fs.writeFileSync(podfilePath, contents);
       return mod;
     },
