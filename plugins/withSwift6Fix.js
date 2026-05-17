@@ -14,16 +14,17 @@ module.exports = function withSwift6Fix(config) {
       let contents = fs.readFileSync(podfilePath, 'utf-8');
 
       // Guard: do not inject twice
-      if (contents.includes('SWIFT_STRICT_CONCURRENCY')) {
+      if (contents.includes('SWIFT_VERSION')) {
         return mod;
       }
 
-      // Find Expo's native post_install block and inject our code directly inside it
+      // Find Expo's native post_install block and inject our language downgrade
       const injection = `post_install do |installer|
   # ── Swift 6 / Xcode 16.4 workaround ─────────────────────────────────────────
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['SWIFT_STRICT_CONCURRENCY'] = 'minimal'
+      config.build_settings['SWIFT_VERSION'] = '5.9'
     end
   end
   # ─────────────────────────────────────────────────────────────────────────────
