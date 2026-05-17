@@ -23,6 +23,11 @@ jobs:
     - name: Expo Prebuild (Generate Native iOS Code)
       run: npx expo prebuild --platform ios --clean
 
+    - name: Install CocoaPods Dependencies
+      run: |
+        cd ios
+        pod install --repo-update
+
     - name: Compile Unsigned iOS App
       run: |
         cd ios
