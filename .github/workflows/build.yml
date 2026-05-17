@@ -20,11 +20,13 @@ jobs:
     - name: Install NPM Packages
       run: npm install
 
-    - name: Patch Expo Modules for Xcode 16
-      run: npm install expo-modules-core@latest
-
     - name: Expo Prebuild (Generate Native iOS Code)
       run: npx expo prebuild --platform ios --clean
+
+    - name: Inject Swift 6 Concurrency Bypass
+      run: |
+        cd ios
+        ruby -i -e 'puts ARGF.read.sub("post_install do |installer|", "post_install do |installer|\n  installer.pods_project.targets.each do |target|\n    target.build_configurations.each do |config|\n      config.build_settings[%q(SWIFT_STRICT_CONCURRENCY)] = %q(minimal)\n    end\n  end")' Podfile
 
     - name: Install CocoaPods Dependencies
       run: |
@@ -34,7 +36,7 @@ jobs:
     - name: Compile Unsigned iOS App
       run: |
         cd ios
-        xcodebuild -workspace TeslaPassiveEntry.xcworkspace -scheme TeslaPassiveEntry -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGNING_IDENTITY="" SWIFT_STRICT_CONCURRENCY=minimal -derivedDataPath derived_data build
+        xcodebuild -workspace TeslaPassiveEntry.xcworkspace -scheme TeslaPassiveEntry -configuration Release -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGNING_IDENTITY="" -derivedDataPath derived_data build
 
     - name: Package into IPA
       run: |
