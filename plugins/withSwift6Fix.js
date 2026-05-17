@@ -13,8 +13,8 @@ module.exports = function withSwift6Fix(config) {
 
       let contents = fs.readFileSync(podfilePath, 'utf-8');
 
-      // Guard: do not inject twice
-      if (contents.includes('SWIFT_VERSION')) {
+      // Guard against double injection
+      if (contents.includes("config.build_settings['SWIFT_VERSION'] = '5.0'")) {
         return mod;
       }
 
@@ -24,7 +24,7 @@ module.exports = function withSwift6Fix(config) {
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['SWIFT_STRICT_CONCURRENCY'] = 'minimal'
-      config.build_settings['SWIFT_VERSION'] = '5.9'
+      config.build_settings['SWIFT_VERSION'] = '5.0'
     end
   end
   # ─────────────────────────────────────────────────────────────────────────────
