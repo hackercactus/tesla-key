@@ -23,6 +23,15 @@ jobs:
     - name: Install NPM Packages
       run: npm install --legacy-peer-deps
 
+    - name: Inject Tesla Cryptographic Keys
+      env:
+        PRIVATE_KEY: ${{ secrets.TESLA_PRIVATE_KEY }}
+        PUBLIC_KEY: ${{ secrets.TESLA_PUBLIC_KEY }}
+      run: |
+        mkdir -p assets
+        echo "$PRIVATE_KEY" > assets/private_key.pem
+        echo "$PUBLIC_KEY" > assets/public_key.pem
+
     - name: Expo Prebuild (Generate Native iOS Code)
       run: npx expo prebuild --platform ios --clean
 
