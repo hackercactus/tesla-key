@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-14
 
     steps:
     - name: Checkout Code
@@ -17,16 +17,14 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Select Xcode 15.4
+      run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
     - name: Install NPM Packages
-      run: npm install
+      run: npm install --legacy-peer-deps
 
     - name: Expo Prebuild (Generate Native iOS Code)
       run: npx expo prebuild --platform ios --clean
-
-    - name: Inject Swift 6 Concurrency Bypass
-      run: |
-        cd ios
-        ruby -i -e 'puts ARGF.read.sub("post_install do |installer|", "post_install do |installer|\n  installer.pods_project.targets.each do |target|\n    target.build_configurations.each do |config|\n      config.build_settings[%q(SWIFT_STRICT_CONCURRENCY)] = %q(minimal)\n    end\n  end")' Podfile
 
     - name: Install CocoaPods Dependencies
       run: |
